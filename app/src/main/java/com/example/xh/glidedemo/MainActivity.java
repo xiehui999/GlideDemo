@@ -6,12 +6,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +49,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void glideLoadImage() {
         int  resourceId=R.mipmap.image;
-        Glide.with(context).load(resourceId).into(imageView);
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/55.jpg").placeholder(R.mipmap.place).error(R.mipmap.error).into(imageView);
+
+        //设置错误监听
+         RequestListener<String,GlideDrawable> errorListener=new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+
+                Log.e("onException",e.toString()+"  model:"+model+" isFirstResource: "+isFirstResource);
+                imageView.setImageResource(R.mipmap.ic_launcher);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                Log.e("onResourceReady","isFromMemoryCache:"+isFromMemoryCache+"  model:"+model+" isFirstResource: "+isFirstResource);
+                return false;
+            }
+        } ;
+        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/5115.jpg").listener(errorListener).into(imageView);
+
     }
 
 
