@@ -1,5 +1,6 @@
 package com.example.xh.glidedemo;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.Target;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +69,22 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         } ;
-        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/5115.jpg").listener(errorListener).into(imageView);
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").listener(errorListener).placeholder(R.mipmap.place).crossFade(3000).into(imageView);
+        //Glide.with(context).load("http://116.255.134.172:9090/jqgj_server_client/mobilephotos/2016/8/11/18603718778_2016081110201470a7684a-0b4c-44db-8676-8bfa00359d19.jpg").dontAnimate().override(400,600).fitCenter().into(imageView);
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(R.anim.anim).into(imageView);
+
+        //java文件设置动画
+        ViewPropertyAnimation.Animator animator=new ViewPropertyAnimation.Animator() {
+            @Override
+            public void animate(View view) {
+              view.setAlpha(0f);
+                ObjectAnimator fadeAnim = ObjectAnimator.ofFloat( view, "alpha", 0f, 1f );
+                fadeAnim.setDuration( 2500 );
+                fadeAnim.start();
+            }
+        };
+        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(animator).into(imageView);
+
 
     }
 
