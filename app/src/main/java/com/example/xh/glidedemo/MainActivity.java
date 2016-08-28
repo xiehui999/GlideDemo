@@ -2,6 +2,13 @@ package com.example.xh.glidedemo;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +21,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
@@ -83,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 fadeAnim.start();
             }
         };
-        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(animator).into(imageView);
-
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(animator).into(imageView);
+        //加载Gif文件
+        // Glide.with(context).load("http://img1.3lian.com/2015/w4/17/d/64.gif").asBitmap().into(imageView);
+        //transform()
+        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,150),new GlideRotateTransform(this)).animate(animator).into(imageView);
 
     }
 
@@ -96,6 +108,75 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 将图像转换为四个角有弧度的图像
+     */
+    public class GlideRoundTransform extends BitmapTransformation {
+        private float radius = 0f;
+
+        public GlideRoundTransform(Context context) {
+            this(context, 100);
+        }
+
+        public GlideRoundTransform(Context context, int dp) {
+            super(context);
+            this.radius = Resources.getSystem().getDisplayMetrics().density * dp;
+        }
+
+        @Override
+        protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+            return roundCrop(pool, toTransform);
+        }
+
+        private Bitmap roundCrop(BitmapPool pool, Bitmap source) {
+            if (source == null) return null;
+
+            Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+            if (result == null) {
+                result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+            }
+            Canvas canvas = new Canvas(result);
+            Paint paint = new Paint();
+            paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
+            paint.setAntiAlias(true);
+            RectF rectF = new RectF(0f, 0f, source.getWidth(), source.getHeight());
+            canvas.drawRoundRect(rectF, radius, radius, paint);
+            Log.e("11aa", radius + "");
+            return result;
+        }
+
+        @Override
+        public String getId() {
+            return getClass().getName() + Math.round(radius);
+        }
+    }
+
+    /**
+     *将图像做旋转操作
+     */
+    public class GlideRotateTransform extends BitmapTransformation {
+        private float rotateAngle = 0f;
+
+        public GlideRotateTransform(Context context) {
+            this(context, 90);
+        }
+
+        public GlideRotateTransform(Context context, float rotateAngle) {
+            super(context);
+            this.rotateAngle = rotateAngle;
+        }
+
+        @Override
+        protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+            Matrix matrix=new Matrix();
+            matrix.postRotate(rotateAngle);
+            return Bitmap.createBitmap(toTransform,0,0,toTransform.getWidth(),toTransform.getHeight(),matrix,true);
+        }
+        @Override
+        public String getId() {
+            return getClass().getName() + rotateAngle;
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
