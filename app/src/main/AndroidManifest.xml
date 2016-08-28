@@ -20,5 +20,7 @@
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <meta-data
+        android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+        android:value="GlideModule" />
 </manifest>

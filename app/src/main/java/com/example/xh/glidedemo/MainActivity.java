@@ -1,6 +1,8 @@
 package com.example.xh.glidedemo;
 
 import android.animation.ObjectAnimator;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,27 +11,33 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.bumptech.glide.request.target.NotificationTarget;
 import com.bumptech.glide.request.target.Target;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int NOTIFICATION_ID =1 ;
     private ImageView imageView;
     private Context context;
     private String[] urls = {"http://img2.3lian.com/2014/f6/173/d/51.jpg", "http://img2.3lian.com/2014/f6/173/d/52.jpg",
@@ -49,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         glideLoadImage();
+        //设置通知栏网络图标
+        notificationTarget();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
         //transform()
         Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,150),new GlideRotateTransform(this)).animate(animator).into(imageView);
 
+        //缓存基础
+        Glide.with(context)
+                .load("http://img2.3lian.com/2014/f6/173/d/51.jpg")
+                .skipMemoryCache(true)//跳过内存缓存
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .animate(animator)
+                .into(imageView);
+
     }
 
 
@@ -108,6 +126,44 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 设置通知栏网络图标
+     */
+    private void notificationTarget() {
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.notifition);
+        remoteViews.setImageViewResource(R.id.notification_icon, R.mipmap.ic_launcher);
+        remoteViews.setTextViewText(R.id.notification_text, "HeadLine");
+
+        //build notifition
+        NotificationCompat.Builder builder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Content Title")
+                .setContentText("Content Text")
+                .setContent(remoteViews)
+                .setPriority(NotificationCompat.PRIORITY_MIN);
+        final Notification notification=builder.build();
+        if (Build.VERSION.SDK_INT>=16){
+            notification.bigContentView=remoteViews;
+        }
+        NotificationManager notificationManager=(NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID,notification);
+
+        NotificationTarget notificationTarget=new NotificationTarget(this,remoteViews,R.id.notification_icon,notification,NOTIFICATION_ID);
+        Glide.with(this).load(urls[4]).asBitmap().placeholder(R.mipmap.ic_launcher).error(R.mipmap.place).listener(new RequestListener<String, Bitmap>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                Log.e("TAG",e.toString());
+                return true;
+            }
+
+            @Override
+            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                Log.e("TAG","1111111111111111111");
+                return false;
+            }
+        }) .dontAnimate().into(notificationTarget);
+
+    }
     /**
      * 将图像转换为四个角有弧度的图像
      */
