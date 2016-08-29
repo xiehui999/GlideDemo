@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.xh.glidedemo"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -29,6 +29,6 @@ dependencies {
     //compile 'com.github.bumptech.glide:okhttp-integration:1.4.0@aar'
     //compile 'com.squareup.okhttp:okhttp:2.2.0'
     //自动集成volley
-    compile 'com.github.bumptech.glide:volley-integration:1.4.0@aar'
-    compile 'com.mcxiaoke.volley:library:1.0.8'
+    //compile 'com.github.bumptech.glide:volley-integration:1.4.0@aar'
+    //compile 'com.mcxiaoke.volley:library:1.0.8'
 }

@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,21 +25,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.NotificationTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_ID =1 ;
     private ImageView imageView;
+    private TextView textView;
     private Context context;
     private String[] urls = {"http://img2.3lian.com/2014/f6/173/d/51.jpg", "http://img2.3lian.com/2014/f6/173/d/52.jpg",
             "http://img2.3lian.com/2014/f6/173/d/53.jpg", "http://img2.3lian.com/2014/f6/173/d/54.jpg",
@@ -55,10 +59,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.context = this;
         imageView = (ImageView) findViewById(R.id.imageView);
+        textView=(TextView)findViewById(R.id.textView);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         glideLoadImage();
         //设置通知栏网络图标
-        notificationTarget();
+       // notificationTarget();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         } ;
-        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").listener(errorListener).placeholder(R.mipmap.place).crossFade(3000).into(imageView);
+        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").listener(errorListener).placeholder(R.mipmap.place).crossFade(3000).into(imageView);
         //Glide.with(context).load("http://116.255.134.172:9090/jqgj_server_client/mobilephotos/2016/8/11/18603718778_2016081110201470a7684a-0b4c-44db-8676-8bfa00359d19.jpg").dontAnimate().override(400,600).fitCenter().into(imageView);
         //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(R.anim.anim).into(imageView);
 
@@ -106,15 +111,31 @@ public class MainActivity extends AppCompatActivity {
         //加载Gif文件
         // Glide.with(context).load("http://img1.3lian.com/2015/w4/17/d/64.gif").asBitmap().into(imageView);
         //transform()
-        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,150),new GlideRotateTransform(this)).animate(animator).into(imageView);
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,150),new GlideRotateTransform(this)).animate(animator).into(imageView);
 
-        //缓存基础
+/*        //缓存基础
         Glide.with(context)
                 .load("http://img2.3lian.com/2014/f6/173/d/51.jpg")
                 .skipMemoryCache(true)//跳过内存缓存
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .animate(animator)
-                .into(imageView);
+                .into(imageView);*/
+
+
+        //SimpleTarget
+        SimpleTarget target = new SimpleTarget<Drawable>(){
+            @Override
+            public void onResourceReady(Drawable resource, GlideAnimation<? super Drawable> glideAnimation) {
+                textView.setBackground(resource);
+            }
+        };
+ /*       Glide.with(context)
+                .load("http://img2.3lian.com/2014/f6/173/d/51.jpg")
+                .skipMemoryCache(true)//跳过内存缓存
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .animate(animator)
+                .into(target);*/
+
 
     }
 
