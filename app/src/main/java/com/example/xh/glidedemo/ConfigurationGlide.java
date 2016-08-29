@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.cache.MemorySizeCalculator;
 import com.bumptech.glide.module.GlideModule;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by xiehui on 2016/8/29.
@@ -52,6 +53,6 @@ public class ConfigurationGlide implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-        // glide.register(CustomImageSizeModel.class, InputStream.class,new CustomImageSizeModelFactory());
+         glide.register(CustomImageSizeModel.class, InputStream.class,new CustomImageSizeModelFactory());
     }
 }

@@ -28,6 +28,7 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         glideLoadImage();
         //设置通知栏网络图标
-       // notificationTarget();
+        notificationTarget();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         } ;
-        Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").listener(errorListener).placeholder(R.mipmap.place).crossFade(3000).into(imageView);
+       // Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").error(R.mipmap.error).placeholder(R.mipmap.place).crossFade(3000).into(imageView);
         //Glide.with(context).load("http://116.255.134.172:9090/jqgj_server_client/mobilephotos/2016/8/11/18603718778_2016081110201470a7684a-0b4c-44db-8676-8bfa00359d19.jpg").dontAnimate().override(400,600).fitCenter().into(imageView);
-        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(R.anim.anim).into(imageView);
+       // Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").thumbnail(0.2f).centerCrop().animate(R.anim.anim).into(imageView);
 
         //java文件设置动画
         ViewPropertyAnimation.Animator animator=new ViewPropertyAnimation.Animator() {
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         //加载Gif文件
         // Glide.with(context).load("http://img1.3lian.com/2015/w4/17/d/64.gif").asBitmap().into(imageView);
         //transform()
-        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,150),new GlideRotateTransform(this)).animate(animator).into(imageView);
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,50),new GlideRotateTransform(this)).animate(animator).into(imageView);
 
 /*        //缓存基础
         Glide.with(context)
@@ -123,18 +124,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         //SimpleTarget
-        SimpleTarget target = new SimpleTarget<Drawable>(){
+        SimpleTarget target = new SimpleTarget<Drawable>(100,100){
             @Override
             public void onResourceReady(Drawable resource, GlideAnimation<? super Drawable> glideAnimation) {
                 textView.setBackground(resource);
             }
         };
- /*       Glide.with(context)
+/*       Glide.with(context)
                 .load("http://img2.3lian.com/2014/f6/173/d/51.jpg")
                 .skipMemoryCache(true)//跳过内存缓存
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .animate(animator)
                 .into(target);*/
+
+        //using() 的动态使用
+        CustomImageSizeModel customImageSizeModel=new CustomImageSizeModelFutureStudio("http://img2.3lian.com/2014/f6/173/d/51.jpg");
+        Glide.with(context)
+                .using(new CustomImageSizeUrlLoader(this))
+                .load(customImageSizeModel)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .animate(animator)
+                .into(target);
 
 
     }

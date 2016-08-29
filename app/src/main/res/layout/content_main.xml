@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:text="Hello World!" />
     <ImageView
-        android:background="@color/colorAccent"
         android:id="@+id/imageView"
-        android:layout_width="500dp"
-        android:layout_height="500dp" />
+        android:layout_above="@id/textView"
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
 </RelativeLayout>
