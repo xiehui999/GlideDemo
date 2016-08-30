@@ -12,8 +12,10 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +30,6 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -38,6 +39,10 @@ import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             "http://img16.3lian.com/gif2016/q21/43/81.jpg", "http://img16.3lian.com/gif2016/q21/43/84.jpg",
             "http://img16.3lian.com/gif2016/q21/43/87.jpg"
     };
+    private URL url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         glideLoadImage();
         //设置通知栏网络图标
-        notificationTarget();
+       // notificationTarget();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,9 +81,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void glideLoadImage() {
-        int  resourceId=R.mipmap.image;
-        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/55.jpg").placeholder(R.mipmap.place).error(R.mipmap.error).into(imageView);
 
+
+        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/55.jpg").placeholder(R.mipmap.place).error(R.mipmap.error).into(imageView);
+        //String加载方式
+        //Glide.with(this).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").into(imageView);
+
+        //URL加载方式
+        try {
+            url=new URL("http://img2.3lian.com/2014/f6/173/d/51.jpg");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+       // Glide.with(this).load(url).into(imageView);
+
+        //资源文件加载方式
+        // int  resourceId=R.mipmap.image;//
+        // Glide.with(this).load(resourceId).into(imageView);
+
+        //本地文件加载
+        //File file = new File(Environment.getExternalStorageDirectory() + File.separator +  "image", "image.jpg");
+        //Glide.with(this).load(file).into(imageView);
+
+        //Uri加载
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator +  "image", "image.jpg");
+        Uri uri = Uri.fromFile(file);
+       // Glide.with(this).load(uri).into(imageView);//uri加载方式
+
+
+        //URL方式该方式在源码中已经标记@Deprecated
+        try {
+            url=new URL("http://img2.3lian.com/2014/f6/173/d/51.jpg");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //Glide.with(this).load(url).into(imageView);//URL加载方式
         //设置错误监听
          RequestListener<String,GlideDrawable> errorListener=new RequestListener<String, GlideDrawable>() {
             @Override
@@ -112,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         //加载Gif文件
         // Glide.with(context).load("http://img1.3lian.com/2015/w4/17/d/64.gif").asBitmap().into(imageView);
         //transform()
-        //Glide.with(context).load("http://img2.3lian.com/2014/f6/173/d/51.jpg").centerCrop().transform(new GlideRoundTransform(this,50),new GlideRotateTransform(this)).animate(animator).into(imageView);
+        Glide.with(context).load(url).centerCrop().transform(new GlideRoundTransform(this,50)).animate(animator).into(imageView);
 
 /*        //缓存基础
         Glide.with(context)
@@ -138,13 +176,13 @@ public class MainActivity extends AppCompatActivity {
                 .into(target);*/
 
         //using() 的动态使用
-        CustomImageSizeModel customImageSizeModel=new CustomImageSizeModelFutureStudio("http://img2.3lian.com/2014/f6/173/d/51.jpg");
+/*        CustomImageSizeModel customImageSizeModel=new CustomImageSizeModelFutureStudio("http://img2.3lian.com/2014/f6/173/d/51.jpg");
         Glide.with(context)
                 .using(new CustomImageSizeUrlLoader(this))
                 .load(customImageSizeModel)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .animate(animator)
-                .into(target);
+                .into(target);*/
 
 
     }
