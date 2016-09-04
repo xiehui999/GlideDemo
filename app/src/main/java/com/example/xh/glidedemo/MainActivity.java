@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
@@ -39,14 +40,17 @@ import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.example.xh.glidedemo.image.LoadImageLinearLayout;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_ID =1 ;
+    private LinearLayout linearLayout;
     private ImageView imageView;
     private TextView textView;
     private Context context;
@@ -67,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         this.context = this;
         imageView = (ImageView) findViewById(R.id.imageView);
         textView=(TextView)findViewById(R.id.textView);
+        linearLayout=(LinearLayout)findViewById(R.id.linearLayout);
+        LoadImageLinearLayout loadImageLinearLayout=new LoadImageLinearLayout(this, Arrays.asList(urls));
+        linearLayout.addView(loadImageLinearLayout);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         glideLoadImage();
         //设置通知栏网络图标
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         //Glide.with(this).load(file).into(imageView);
 
         //Uri加载
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator +  "image", "image.jpg");
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator +"jqgj"+ File.separator+ "Images", "image.jpg");
         Uri uri = Uri.fromFile(file);
        // Glide.with(this).load(uri).into(imageView);//uri加载方式
 
